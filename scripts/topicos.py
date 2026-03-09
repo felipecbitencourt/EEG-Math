@@ -42,11 +42,14 @@ megatopicos_dict = {
 # ------------------------------------------------------------
 # 3. CARREGAMENTO DO CSV
 # ------------------------------------------------------------
-df = pd.read_csv("/content/drive/MyDrive/EEG+ Math/CSVs/metadados_artigos_com_topicos.csv")
+CSV_PATH = "/home/eduarda-tessari-pereira/Documents/pesquisas/claudio/EEG-Math/dados base/revisão-egg+math - Limpo.csv"
+OUTPUT_IMG = "/home/eduarda-tessari-pereira/Documents/pesquisas/claudio/EEG-Math/visualizações/grafico_barras_EEG_MATH.png"
+
+df = pd.read_csv(CSV_PATH, sep=';', encoding='utf-8')
 
 df = df.dropna(subset=["Topico", "Megatopico"])
-df["Topico"] = df["Topico"].astype(int)
-df["Megatopico"] = df["Megatopico"].astype(int)
+df["Topico"] = pd.to_numeric(df["Topico"], errors='coerce').fillna(0).astype(int)
+df["Megatopico"] = pd.to_numeric(df["Megatopico"], errors='coerce').fillna(0).astype(int)
 
 # ------------------------------------------------------------
 # 4. CONTAGEM POR MEGATÓPICO E TÓPICO
@@ -128,10 +131,10 @@ ax.legend(
 )
 
 plt.tight_layout()
-plt.savefig("/content/grafico_barras_EEG_MATH.png", dpi=300, bbox_inches="tight")
-plt.show()
+plt.savefig(OUTPUT_IMG, dpi=300, bbox_inches="tight")
+# plt.show()
 
-print("✅ Gráfico salvo em: /content/grafico_barras_EEG_MATH.png")
+print(f"✅ Gráfico salvo em: {OUTPUT_IMG}")
 
 # ============================================================
 # ✅ CONTAGENS NUMÉRICAS

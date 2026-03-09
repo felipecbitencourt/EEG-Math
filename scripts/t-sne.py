@@ -14,8 +14,8 @@ warnings.filterwarnings("ignore")
 # ---------------------------
 # Config
 # ---------------------------
-CSV_PATH = "/content/drive/MyDrive/EEG+ Math/CSVs/metadados_artigos_com_topicos_texto.csv"
-OUTPUT_EMBED_CSV = "/content/drive/MyDrive/EEG+ Math/CSVs/embeddings_tsne_texto_limpo.csv"
+CSV_PATH = "/home/eduarda-tessari-pereira/Documents/pesquisas/claudio/EEG-Math/dados base/revisão-egg+math - Limpo.csv"
+OUTPUT_EMBED_CSV = "/home/eduarda-tessari-pereira/Documents/pesquisas/claudio/EEG-Math/dados base/embeddings_tsne_texto_limpo.csv"
 MIN_TEXT_LEN = 100  # mínimo de caracteres para considerar texto válido
 
 # ---------------------------
@@ -70,17 +70,17 @@ EDGE_WIDTH = 0.9
 # ---------------------------
 # 1. Carregar CSV
 # ---------------------------
-df = pd.read_csv(CSV_PATH)
+df = pd.read_csv(CSV_PATH, sep=';', encoding='utf-8')
 
 # Verificar se coluna de texto limpo existe
-if "Texto_extraido_limpo" not in df.columns:
-    raise ValueError("Coluna 'Texto_extraido_limpo' não encontrada no CSV. Execute primeiro o pipeline de extração.")
+if "Texto_Completo" not in df.columns:
+    raise ValueError("Coluna 'Texto_Completo' não encontrada no CSV. Execute primeiro o pipeline de extração.")
 
 # Limpar dados e filtrar textos válidos
-df = df.dropna(subset=["Topico", "Megatopico", "Texto_extraido_limpo"])
-df["Topico"] = df["Topico"].astype(int)
-df["Megatopico"] = df["Megatopico"].astype(int)
-df_validos = df[df["Texto_extraido_limpo"].str.len() >= MIN_TEXT_LEN].reset_index(drop=True)
+df = df.dropna(subset=["Topico", "Megatopico", "Texto_Completo"])
+df["Topico"] = pd.to_numeric(df["Topico"], errors='coerce').fillna(0).astype(int)
+df["Megatopico"] = pd.to_numeric(df["Megatopico"], errors='coerce').fillna(0).astype(int)
+df_validos = df[df["Texto_Completo"].str.len() >= MIN_TEXT_LEN].reset_index(drop=True)
 
 print(f"✅ Textos válidos para análise: {len(df_validos)} artigos")
 
@@ -97,7 +97,7 @@ vectorizer = TfidfVectorizer(
     ngram_range=(1,2),
     max_features=7000
 )
-X = vectorizer.fit_transform(df_validos["Texto_extraido_limpo"].astype(str))
+X = vectorizer.fit_transform(df_validos["Texto_Completo"].astype(str))
 
 # ---------------------------
 # 3. t-SNE
@@ -110,12 +110,14 @@ df_validos["tsne_y"] = X_embedded[:,1]
 # ---------------------------
 # 4. Salvar embeddings + meta
 # ---------------------------
-df_validos.to_csv(OUTPUT_EMBED_CSV, index=False)
+df_validos.to_csv(OUTPUT_EMBED_CSV, index=False, sep=';')
 print(f"\n✅ Embeddings + textos salvos em: {OUTPUT_EMBED_CSV}")
 
 # ---------------------------
 # 5. Plot t-SNE
 # ---------------------------
+OUTPUT_IMG = "/home/eduarda-tessari-pereira/Documents/pesquisas/claudio/EEG-Math/visualizações/tsne_plot.png"
+
 fig, ax = plt.subplots(figsize=(20,13))
 fig.patch.set_facecolor("white")
 
@@ -170,4 +172,6 @@ ax.set_xlabel("t-SNE 1", fontsize=14, fontweight='bold')
 ax.set_ylabel("t-SNE 2", fontsize=14, fontweight='bold')
 ax.grid(True, linestyle="--", alpha=0.28)
 plt.tight_layout()
-plt.show()
+plt.savefig(OUTPUT_IMG, dpi=300, bbox_inches="tight")
+# plt.show()
+print(f"✅ Gráfico t-SNE salvo em: {OUTPUT_IMG}")
