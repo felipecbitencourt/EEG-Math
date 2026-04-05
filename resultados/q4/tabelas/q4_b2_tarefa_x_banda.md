@@ -1,0 +1,39 @@
+# Q4 Bloco 2 — Cruzamento tarefa x banda
+
+| Tarefa | Banda | Estudos |
+|---|---|---:|
+| `mental_arithmetic` | `alpha` | 31 |
+| `mental_arithmetic` | `theta` | 31 |
+| `mental_arithmetic` | `beta` | 25 |
+| `subtraction` | `alpha` | 21 |
+| `subtraction` | `theta` | 20 |
+| `mental_arithmetic` | `delta` | 19 |
+| `mental_arithmetic` | `gamma` | 16 |
+| `subtraction` | `beta` | 16 |
+| `serial_subtraction` | `alpha` | 14 |
+| `subtraction` | `delta` | 14 |
+| `addition` | `alpha` | 13 |
+| `addition` | `theta` | 13 |
+| `serial_subtraction` | `theta` | 13 |
+| `serial_subtraction` | `delta` | 12 |
+| `serial_subtraction` | `beta` | 11 |
+| `subtraction` | `gamma` | 11 |
+| `addition` | `beta` | 9 |
+| `serial_subtraction` | `gamma` | 9 |
+| `multiplication` | `alpha` | 6 |
+| `multiplication` | `theta` | 6 |
+| `addition` | `delta` | 5 |
+| `problem_solving` | `alpha` | 5 |
+| `problem_solving` | `beta` | 5 |
+| `problem_solving` | `theta` | 5 |
+| `puzzles_games` | `alpha` | 4 |
+| `puzzles_games` | `beta` | 4 |
+| `puzzles_games` | `theta` | 4 |
+| `addition` | `gamma` | 3 |
+| `problem_solving` | `delta` | 3 |
+| `multiplication` | `beta` | 2 |
+| `multiplication` | `gamma` | 2 |
+| `problem_solving` | `gamma` | 2 |
+| `puzzles_games` | `delta` | 2 |
+| `puzzles_games` | `gamma` | 2 |
+| `multiplication` | `delta` | 1 |

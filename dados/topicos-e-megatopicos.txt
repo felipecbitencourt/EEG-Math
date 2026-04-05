@@ -1,0 +1,17 @@
+Megatópicos & Tópicos
+Megatopico 1 - Perfis Individuais e Diferenças Cognitivas
+T1 - Matemática e Transtornos/Condições Clínicas
+T2 - Ansiedade e Estresse Matemático
+T3 - Gênero e Diferenças Sexuais
+T4 - Superdotação e Altas Habilidades
+T9 - Desenvolvimento, Educação e Contexto Escolar
+T11 - Condições Experimentais e Variáveis Contextuais
+
+Megatopico 2 - Métodos Computacionais e Classificação
+T5 - Modelos de Classificação e Aprendizado de Máquina
+T10 - Análise Espectral
+
+Megatopico 3 - Processos Cognitivos e Dinâmica Neural
+T6 - Conectividade e Redes Cerebrais
+T7 - Desempenho Matemático e Diferenças de Habilidade
+T8 - Carga Cognitiva, Fadiga e Estado Mental

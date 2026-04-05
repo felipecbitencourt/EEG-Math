@@ -24,20 +24,25 @@ psych_map = {
     "STAI": ["STAI"], "HAMA": ["HAMA"], "PSS": ["PSS"], "MARS": ["MARS"], "SMARS": ["SMARS"], "AMAS": ["AMAS"], "MASS": ["MASS"],
     "HAMD": ["HAMD"], "BDI": ["BDI"], "MMSE": ["MMSE"], "RAVLT": ["RAVLT"], "ACE": ["ACE"], "CDR": ["CDR"],
     "RAPM": ["RAPM"], "RPMT": ["RPMT"], "WAIS": ["WAIS"], "WISC": ["WISC"], "BIS": ["BIS"],
-    "NEO": ["NEO"], "ASRS": ["ASRS"], "DISC": ["DISC"], "NASA": ["NASA"], "CBCL": ["CBCL"]
+    "NEO": ["NEO"], "ASRS": ["ASRS"], "DISC": ["DISC"], "NASA": ["NASA"], "CBCL": ["CBCL"],
+    "PANSS": ["PANSS"], "IQ": [" IQ", "IQ ", "intelligence quotient"],
+    "Mental_rotation": ["mental rotation"], "Memory_capacity": ["memory capacity"],
+    "VAMS": ["VAMS", "visual analogue mood scale"], "AD_ACL": ["AD-ACL", "activation deactivation adjective checklist"],
+    "SAQ": ["self-attributes questionnaire", "SAQ"], "Math_devaluing": ["math devaluing"]
 }
 psych_domain_map = {
     "Anxiety": ["STAI", "HAMA", "MARS", "SMARS", "AMAS", "MASS"],
-    "Stress": ["PSS", "NASA"],
+    "Stress": ["PSS", "NASA", "VAMS", "AD_ACL"],
     "Depression": ["HAMD", "BDI"],
-    "Intelligence": ["RAPM", "RPMT", "WAIS", "WISC", "BIS"],
-    "Cognition": ["MMSE", "RAVLT", "ACE", "CDR"],
+    "Intelligence": ["RAPM", "RPMT", "WAIS", "WISC", "BIS", "IQ"],
+    "Cognition": ["MMSE", "RAVLT", "ACE", "CDR", "Mental_rotation", "Memory_capacity"],
     "Attention": ["ASRS"],
     "Personality": ["NEO"],
-    "Diagnosis": ["DISC", "CBCL"]
+    "Diagnosis": ["DISC", "CBCL", "PANSS"],
+    "Self_concept": ["SAQ", "Math_devaluing"]
 }
 
-behavior_map = {"Accuracy": ["accuracy", "correct", "acurácia", "acerto"], "Error_rate": ["error", "erro"], "Reaction_time": ["reaction time", "rt", "tempo de reação"], "Latency": ["latency"], "Throughput": ["per minute"], "Confidence": ["confidence"], "Difficulty": ["difficulty", "effort"], "Strategy": ["strategy"], "Self_report": ["self-report"], "Stress": ["stress"], "Happiness": ["happiness"], "Anxiety": ["anxiety"], "Cognitive_load": ["cognitive load", "workload"], "Drowsiness": ["drowsiness"], "Score": ["score", "exam", "nota"]}
+behavior_map = {"Accuracy": ["accuracy", "acurracy", "correct", "acurácia", "acerto", "correct answers"], "Error_rate": ["error", "erro", "incorrect"], "Reaction_time": ["reaction time", "response time", "rt", "tempo de reação"], "Latency": ["latency"], "Throughput": ["per minute", "counting speed", "number of subtractions"], "Confidence": ["confidence"], "Difficulty": ["difficulty", "effort"], "Strategy": ["strategy"], "Self_report": ["self-report", "subjective ratings"], "Stress": ["stress"], "Happiness": ["happiness"], "Anxiety": ["anxiety"], "Cognitive_load": ["cognitive load", "workload", "mental workload", "count quality"], "Drowsiness": ["drowsiness"], "Score": ["score", "exam", "nota", "performance"]}
 
 region_map = {"Frontal": ["frontal", "fp", "f"], "Central": ["central", "c"], "Parietal": ["parietal", "p"], "Temporal": ["temporal", "t"], "Occipital": ["occipital", "o"], "Midline": ["fz", "cz", "pz", "midline"]}
 
