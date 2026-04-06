@@ -32,40 +32,59 @@ def _numeric_series(df: pd.DataFrame, col: str) -> pd.Series:
     return pd.to_numeric(df[col], errors="coerce")
 
 
+def _style_axes_minimal(ax: plt.Axes) -> None:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+
 def plot_hist_n_total(df: pd.DataFrame, path: Path) -> None:
-    """Histograma com eixo X em escala log (melhor para cauda à direita)."""
+    """Histogram with log-scaled X (better for right-skewed sample sizes)."""
     n = _numeric_series(df, "amostra_n_total").dropna()
     n = n[n > 0]
-    fig, ax = plt.subplots(figsize=(8, 4.5))
+    fig, ax = plt.subplots(figsize=(8.5, 4.8))
     if len(n) == 0:
-        ax.text(0.5, 0.5, "Sem N total > 0", ha="center", va="center")
+        ax.text(0.5, 0.5, "No studies with total N > 0", ha="center", va="center", transform=ax.transAxes)
         ax.set_axis_off()
-        fig.savefig(path, dpi=150)
+        fig.savefig(path, dpi=180, bbox_inches="tight")
         plt.close(fig)
         return
     lo, hi = float(n.min()), float(n.max())
-    bins = np.logspace(np.log10(lo), np.log10(hi), min(18, max(8, int(len(n) ** 0.5) + 5)))
-    ax.hist(n, bins=bins, color="#3d5a80", edgecolor="white", linewidth=0.6)
+    if lo == hi:
+        bins = np.array([lo * 0.9, hi * 1.1])
+    else:
+        bins = np.logspace(np.log10(lo), np.log10(hi), min(18, max(8, int(len(n) ** 0.5) + 5)))
+    ax.hist(n, bins=bins, color="#3d5a80", edgecolor="white", linewidth=0.7, alpha=0.92)
     med = float(n.median())
-    ax.axvline(med, color="#ee6c4d", linestyle="--", linewidth=1.5, label=f"Mediana = {med:.0f}")
+    ax.axvline(med, color="#ee6c4d", linestyle="--", linewidth=1.6, label=f"Median = {med:.0f}")
     ax.set_xscale("log")
-    ax.set_xlabel("N total (participantes), escala log")
-    ax.set_ylabel("Número de estudos (cada barra: estudos nessa faixa de N)")
-    ax.set_title(f"Distribuição de amostra_n_total (k = {len(n)} estudos)")
-    ax.legend(frameon=False)
+    ax.set_xlabel("Total N (participants), log scale")
+    ax.set_ylabel("Number of studies")
+    ax.set_title(f"Distribution of total sample size (k = {len(n)} studies)")
+    _style_axes_minimal(ax)
+    ax.yaxis.grid(True, linestyle=":", alpha=0.45, color="gray")
+    ax.set_axisbelow(True)
+    ax.legend(frameon=True, framealpha=0.92, loc="upper right", edgecolor="#e0e0e0")
     fig.tight_layout()
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 
 def plot_violin_n_total(df: pd.DataFrame, path: Path) -> None:
-    """Violino + pontos (cada estudo) para ver dispersão e outliers."""
+    """Violin + jittered points (each study) for spread and outliers."""
     n = _numeric_series(df, "amostra_n_total").dropna().astype(float)
-    fig, ax = plt.subplots(figsize=(6.5, 5))
+    n = n[n > 0]
+    fig, ax = plt.subplots(figsize=(7, 5.2))
     if len(n) < 2:
-        ax.text(0.5, 0.5, "Dados insuficientes para violino", ha="center", va="center")
+        ax.text(
+            0.5,
+            0.5,
+            "Insufficient data for violin plot",
+            ha="center",
+            va="center",
+            transform=ax.transAxes,
+        )
         ax.set_axis_off()
-        fig.savefig(path, dpi=150)
+        fig.savefig(path, dpi=180, bbox_inches="tight")
         plt.close(fig)
         return
     rng = np.random.default_rng(42)
@@ -73,26 +92,48 @@ def plot_violin_n_total(df: pd.DataFrame, path: Path) -> None:
         [n.values],
         positions=[0],
         showmeans=False,
-        showmedians=True,
-        widths=0.55,
+        showmedians=False,
+        showextrema=True,
+        widths=0.62,
     )
     for b in parts["bodies"]:
         b.set_facecolor("#98c1d9")
         b.set_edgecolor("#3d5a80")
-        b.set_alpha(0.55)
-    for key in ("cbars", "cmins", "cmaxes", "cmedians"):
+        b.set_linewidth(1.1)
+        b.set_alpha(0.5)
+    for key in ("cbars", "cmins", "cmaxes"):
         if key in parts:
             parts[key].set_color("#3d5a80")
-    jitter = rng.uniform(-0.28, 0.28, size=len(n))
-    ax.scatter(jitter, n.values, alpha=0.55, s=32, c="#3d5a80", edgecolors="white", linewidths=0.35)
-    ax.axhline(float(n.median()), color="#ee6c4d", linestyle="--", linewidth=1.2, label=f"Mediana = {n.median():.0f}")
+            parts[key].set_linewidth(1.0)
+    if "cmedians" in parts:
+        parts["cmedians"].set_visible(False)
+    jitter = rng.uniform(-0.3, 0.3, size=len(n))
+    ax.scatter(
+        jitter,
+        n.values,
+        alpha=0.5,
+        s=36,
+        c="#293241",
+        edgecolors="white",
+        linewidths=0.4,
+        zorder=3,
+        label="Individual studies",
+    )
+    med = float(n.median())
+    ax.axhline(med, color="#ee6c4d", linestyle="--", linewidth=1.4, label=f"Median = {med:.0f}", zorder=2)
     ax.set_xticks([0])
-    ax.set_xticklabels([""])
-    ax.set_ylabel("N total (participantes por estudo)")
-    ax.set_title(f"amostra_n_total: violino + estudos individuais (k = {len(n)})")
-    ax.legend(frameon=False, loc="upper right")
+    ax.set_xticklabels(["All studies"])
+    ax.set_xlabel("")
+    ax.set_ylabel("Total N (participants per study)")
+    ax.set_title(f"Total sample size: violin density and individual studies (k = {len(n)})")
+    _style_axes_minimal(ax)
+    ax.yaxis.grid(True, linestyle=":", alpha=0.45, color="gray")
+    ax.set_axisbelow(True)
+    ymax = float(n.max()) * 1.06
+    ax.set_ylim(bottom=max(0, float(n.min()) * 0.92 if n.min() > 5 else 0), top=ymax)
+    ax.legend(frameon=True, framealpha=0.92, loc="upper right", edgecolor="#e0e0e0")
     fig.tight_layout()
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 

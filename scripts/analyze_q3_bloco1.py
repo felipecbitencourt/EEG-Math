@@ -43,6 +43,34 @@ TAG_PT = {
     "executive_mixed_task": "Funções executivas / tarefas mistas",
 }
 
+TAG_EN = {
+    "addition": "Addition",
+    "subtraction": "Subtraction",
+    "multiplication": "Multiplication",
+    "division": "Division",
+    "mental_arithmetic": "Mental calculation",
+    "serial_subtraction": "Serial subtraction / Kraepelin",
+    "fractions_ratios": "Fractions / proportions",
+    "algebra": "Algebra / symbolic",
+    "magnitude_comparison": "Magnitude comparison",
+    "word_problems": "Word problems",
+    "problem_solving": "Problem solving",
+    "deductive_reasoning": "Deductive reasoning",
+    "inductive_reasoning": "Inductive reasoning",
+    "geometry_spatial": "Geometry / spatial",
+    "functions_representations": "Functions / representations (G↔A)",
+    "standardized_test": "Standardized test (e.g., SAT)",
+    "puzzles_games": "Puzzles / games (e.g., ToH, 24)",
+    "verification_task": "Verification task",
+    "learning_demonstration": "Learning / demonstrations",
+    "modulo": "Modulo operations",
+    "broad_math_battery": "Broad math battery",
+    "written_mode": "Written mode (not just mental)",
+    "arithmetic_mixed_ops": "Mixed arithmetic operations",
+    "arithmetic_general": "Arithmetic (general mention)",
+    "executive_mixed_task": "Executive functions / mixed tasks",
+}
+
 
 def _load() -> pd.DataFrame:
     return pd.read_csv(CSV_PATH, encoding="utf-8")
@@ -69,13 +97,18 @@ def _n_tags_per_study(df: pd.DataFrame) -> list[int]:
     return [len(_tags_from_cell(v)) for v in df["math_processes_tags"]]
 
 
+def _style_axes_minimal(ax: plt.Axes) -> None:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+
 def plot_tags_bars_h(df: pd.DataFrame, path: Path) -> None:
     c = _tag_study_counter(df)
     if not c:
         fig, ax = plt.subplots(figsize=(7, 3))
-        ax.text(0.5, 0.5, "Sem tags", ha="center", va="center")
+        ax.text(0.5, 0.5, "No tags", ha="center", va="center", transform=ax.transAxes)
         ax.set_axis_off()
-        fig.savefig(path, dpi=150)
+        fig.savefig(path, dpi=180, bbox_inches="tight")
         plt.close(fig)
         return
     items = sorted(c.items(), key=lambda x: x[1])
@@ -84,15 +117,20 @@ def plot_tags_bars_h(df: pd.DataFrame, path: Path) -> None:
     pct = [100 * x / n for x in counts]
     fig, ax = plt.subplots(figsize=(9, max(4.0, 0.38 * len(tags) + 1.5)))
     y = np.arange(len(tags))
-    ax.barh(y, counts, color="#3d5a80", height=0.55, edgecolor="white", linewidth=0.5)
+    ax.barh(y, counts, color="#3d5a80", height=0.55, edgecolor="white", linewidth=0.55)
     ax.set_yticks(y)
-    labels = [f"{TAG_PT.get(t, t.replace('_', ' '))}\n({p:.1f}% dos estudos)" for t, p in zip(tags, pct)]
+    labels = [
+        f"{TAG_EN.get(t, t.replace('_', ' '))}\n({p:.1f}% of studies)" for t, p in zip(tags, pct)
+    ]
     ax.set_yticklabels(labels, fontsize=9)
     ax.invert_yaxis()
-    ax.set_xlabel("Número de estudos com a tag")
-    ax.set_title(f"Processos matemáticos (math_processes_tags; N = {n} estudos)")
+    ax.set_xlabel("Number of studies with the tag")
+    ax.set_title(f"Mathematical processes (math_processes_tags; N = {n} studies)")
+    _style_axes_minimal(ax)
+    ax.xaxis.grid(True, linestyle=":", alpha=0.45, color="gray")
+    ax.set_axisbelow(True)
     fig.tight_layout()
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 

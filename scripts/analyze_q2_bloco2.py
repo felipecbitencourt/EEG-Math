@@ -26,6 +26,17 @@ POP_PT = {
     "unspecified": "Não especificado",
 }
 
+POP_EN = {
+    "clinical": "Clinical / neurological population",
+    "experts_maths": "Expertise or talent in mathematics",
+    "mixed_children_students": "Mixed (children and students)",
+    "children": "Children",
+    "elderly": "Older adults",
+    "students": "Students",
+    "healthy": "Adults (convenience sample)",
+    "unspecified": "Unspecified",
+}
+
 MARKER_PT = {
     "math_anxiety": "Ansiedade matemática / ameaça de estereótipo",
     "dyscalculia": "Discalculia",
@@ -39,6 +50,21 @@ MARKER_PT = {
     "stroke": "AVC",
     "meditators": "Meditação / mindfulness",
     "teachers": "Professores",
+}
+
+MARKER_EN = {
+    "math_anxiety": "Math anxiety / stereotype threat",
+    "dyscalculia": "Dyscalculia",
+    "gifted": "High performance / talent",
+    "experts_novices": "Experts vs. novices",
+    "mci_dementia": "MCI / dementia",
+    "schizophrenia": "Schizophrenia",
+    "autism": "Autism / ASD",
+    "adhd": "ADHD",
+    "epilepsy": "Epilepsy",
+    "stroke": "Stroke",
+    "meditators": "Meditation / mindfulness",
+    "teachers": "Teachers",
 }
 
 
@@ -60,6 +86,11 @@ def _population_counts(df: pd.DataFrame) -> pd.Series:
     return s.value_counts()
 
 
+def _style_axes_minimal(ax: plt.Axes) -> None:
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+
 def _marker_study_counter(df: pd.DataFrame) -> Counter[str]:
     c: Counter[str] = Counter()
     for val in df["amostra_marcadores_tags"]:
@@ -75,15 +106,18 @@ def plot_population_bars_h(df: pd.DataFrame, path: Path) -> None:
     fig, ax = plt.subplots(figsize=(8.5, 4.8))
     colors = plt.cm.Blues(np.linspace(0.35, 0.85, len(vc)))[::-1]
     y = np.arange(len(vc))
-    ax.barh(y, vc.values, color=colors, height=0.62, edgecolor="white", linewidth=0.6)
+    ax.barh(y, vc.values, color=colors, height=0.62, edgecolor="white", linewidth=0.65)
     ax.set_yticks(y)
-    labels = [f"{POP_PT.get(i, i)}\n({pct[i]:.1f}%)" for i in vc.index]
+    labels = [f"{POP_EN.get(i, i)}\n({pct[i]:.1f}%)" for i in vc.index]
     ax.set_yticklabels(labels, fontsize=10)
     ax.invert_yaxis()
-    ax.set_xlabel("Número de estudos")
-    ax.set_title(f"Tipo de população (amostra_population_type; k = {n})")
+    ax.set_xlabel("Number of studies")
+    ax.set_title(f"Population type (sample_population_type; k = {n})")
+    _style_axes_minimal(ax)
+    ax.xaxis.grid(True, linestyle=":", alpha=0.45, color="gray")
+    ax.set_axisbelow(True)
     fig.tight_layout()
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -140,26 +174,28 @@ def plot_markers_bars_h(df: pd.DataFrame, path: Path) -> None:
     c = _marker_study_counter(df)
     if not c:
         fig, ax = plt.subplots(figsize=(7, 3))
-        ax.text(0.5, 0.5, "Sem tags de marcadores", ha="center", va="center")
+        ax.text(0.5, 0.5, "No marker tags", ha="center", va="center", transform=ax.transAxes)
         ax.set_axis_off()
-        fig.savefig(path, dpi=150)
+        fig.savefig(path, dpi=180, bbox_inches="tight")
         plt.close(fig)
         return
     items = sorted(c.items(), key=lambda x: -x[1])
     tags = [t for t, _ in items]
     counts = [n for _, n in items]
-    labels = [MARKER_PT.get(t, t.replace("_", " ")) for t in tags]
+    labels = [MARKER_EN.get(t, t.replace("_", " ")) for t in tags]
     fig, ax = plt.subplots(figsize=(8, max(3.2, 0.45 * len(tags) + 1.2)))
     y = np.arange(len(tags))
-    ax.barh(y, counts, color="#3d5a80", height=0.55, edgecolor="white", linewidth=0.5)
+    ax.barh(y, counts, color="#3d5a80", height=0.55, edgecolor="white", linewidth=0.55)
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=10)
     ax.invert_yaxis()
-    ax.set_xlabel("Número de estudos com a tag (coluna 5 normatizada)")
-    k_any = int(df["amostra_marcadores_tags"].apply(lambda v: bool(_tags_from_cell(v))).sum())
-    ax.set_title(f"Marcadores amostrais (amostra_marcadores_tags); estudos com ≥1 tag: k = {k_any}")
+    ax.set_xlabel("Number of studies")
+    ax.set_title("Sample Markers")
+    _style_axes_minimal(ax)
+    ax.xaxis.grid(True, linestyle=":", alpha=0.45, color="gray")
+    ax.set_axisbelow(True)
     fig.tight_layout()
-    fig.savefig(path, dpi=150)
+    fig.savefig(path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 
